@@ -1,0 +1,956 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Красно-Белое — Магазин в Новомосковске</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg-dark: #050509;
+      --card-bg: rgba(10, 10, 20, 0.96);
+      --accent: #ff1844;
+      --accent-soft: #ff4b6b;
+      --text-main: #ffffff;
+      --text-muted: #c9c9d6;
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --radius-xl: 24px;
+      --shadow-strong: 0 18px 55px rgba(0, 0, 0, 0.9);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* Видеофон */
+    .video-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      overflow: hidden;
+    }
+
+    .video-bg video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.25);
+    }
+
+    /* Неоновые градиенты сверху */
+    .page-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255, 24, 68, 0.35) 0, transparent 55%),
+        radial-gradient(circle at 90% 10%, rgba(255, 80, 120, 0.35) 0, transparent 55%),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(5, 5, 15, 0.96) 35%, #050509 100%);
+      mix-blend-mode: screen;
+    }
+
+    .container {
+      width: min(1120px, 100% - 40px);
+      margin: 0 auto;
+    }
+
+    /* Шапка */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(
+        to bottom,
+        rgba(5, 5, 15, 0.97),
+        rgba(5, 5, 15, 0.88)
+      );
+      border-bottom: 1px solid rgba(255, 24, 68, 0.55);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.95);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+      gap: 18px;
+    }
+
+    .logo-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+
+    .logo span {
+      background: linear-gradient(110deg, var(--accent), var(--accent-soft));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 14px rgba(255, 24, 68, 0.55);
+    }
+
+    .logo-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      opacity: 0.9;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 14px;
+    }
+
+    .nav a {
+      text-decoration: none;
+      color: var(--text-muted);
+      padding: 8px 10px;
+      border-radius: 999px;
+      transition: 0.25s ease;
+    }
+
+    .nav a:hover {
+      color: var(--text-main);
+      background: rgba(255, 24, 68, 0.12);
+    }
+
+    .nav-cta {
+      padding: 9px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: radial-gradient(circle at 0 0, rgba(255, 24, 68, 0.24), rgba(10, 10, 20, 0.96));
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 0 22px rgba(255, 24, 68, 0.4);
+      transition: 0.25s ease;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 32px rgba(255, 24, 68, 0.8);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Герой-блок */
+    .hero {
+      padding: 40px 0 28px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 26px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: radial-gradient(circle at 0 0, rgba(255, 24, 68, 0.4), rgba(10, 10, 20, 0.95));
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 16px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(255, 24, 68, 0.85);
+    }
+
+    .hero-title {
+      font-size: clamp(28px, 5vw, 38px);
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+
+    .hero-title span {
+      color: var(--accent-soft);
+      text-shadow: 0 0 18px rgba(255, 24, 68, 0.85);
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin-bottom: 22px;
+    }
+
+    .hero-highlights {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 12px;
+      color: var(--text-muted);
+      background: rgba(8, 8, 18, 0.9);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 22px;
+      border-radius: 999px;
+      border: none;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.22s ease;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: radial-gradient(circle at 0 0, #ff5577, #ff1844);
+      color: var(--text-main);
+      box-shadow:
+        0 0 18px rgba(255, 24, 68, 0.75),
+        0 18px 40px rgba(0, 0, 0, 0.9);
+    }
+
+    .btn-primary::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0.4),
+        transparent 40%,
+        transparent 60%,
+        rgba(255, 255, 255, 0.3)
+      );
+      opacity: 0;
+      transform: translateX(-40%);
+      transition: 0.4s ease;
+      pointer-events: none;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 0 26px rgba(255, 24, 68, 0.9),
+        0 18px 44px rgba(0, 0, 0, 0.95);
+    }
+
+    .btn-primary:hover::after {
+      opacity: 1;
+      transform: translateX(40%);
+    }
+
+    .btn-ghost {
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(10, 10, 20, 0.9);
+      color: var(--text-main);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 24, 68, 0.12);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .hero-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 10px;
+      opacity: 0.85;
+    }
+
+    .hero-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      padding: 22px 20px;
+      box-shadow: var(--shadow-strong);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, rgba(255, 24, 68, 0.85), transparent);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      padding: 1px;
+      opacity: 0.45;
+    }
+
+    .hero-card-title {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #3cff8b;
+      box-shadow: 0 0 10px rgba(60, 255, 139, 0.9);
+    }
+
+    .hero-card-main {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .hero-card-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 24, 68, 0.14);
+      color: var(--accent-soft);
+      margin-bottom: 16px;
+    }
+
+    .hero-rows {
+      display: grid;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .hero-row-label {
+      opacity: 0.7;
+    }
+
+    .hero-row-value {
+      color: var(--text-main);
+    }
+
+    /* Общий стиль секций */
+    .section {
+      padding: 20px 0 12px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      margin-bottom: 14px;
+    }
+
+    .section-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-subtle);
+      padding: 24px 22px;
+      box-shadow: var(--shadow-strong);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      border: 1px solid transparent;
+      background: linear-gradient(145deg, rgba(255, 24, 68, 0.5), transparent);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      padding: 1px;
+      opacity: 0.4;
+    }
+
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 22px;
+      align-items: flex-start;
+    }
+
+    .list {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .list li {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .list-bullet {
+      margin-top: 4px;
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(255, 24, 68, 0.8);
+      box-shadow: 0 0 10px rgba(255, 24, 68, 0.9);
+      flex-shrink: 0;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(8, 8, 18, 0.9);
+    }
+
+    /* Карта */
+    .map-wrapper {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 1);
+    }
+
+    .map-wrapper iframe {
+      width: 100%;
+      height: 320px;
+      border: 0;
+      display: block;
+    }
+
+    /* Отзывы (простой карусели не делаю — только стиль) */
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .review-card {
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: radial-gradient(circle at 0 0, rgba(255, 24, 68, 0.25), rgba(10, 10, 20, 0.96));
+      padding: 14px 14px 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.95);
+    }
+
+    .review-name {
+      font-size: 13px;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .review-meta {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-bottom: 8px;
+    }
+
+    /* Футер */
+    .footer {
+      padding: 26px 0 32px;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      opacity: 0.85;
+    }
+
+    .footer span {
+      color: var(--accent-soft);
+    }
+
+    /* Анимации появления секций */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+
+    .reveal-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Адаптив */
+    @media (max-width: 900px) {
+      .hero-grid,
+      .card-grid-2 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .hero-card {
+        order: -1;
+      }
+
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        width: min(100% - 24px, 480px);
+      }
+
+      .header-inner {
+        gap: 10px;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+
+      .hero {
+        padding-top: 26px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .reviews-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .map-wrapper iframe {
+        height: 260px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Видеофон. ЗАМЕНИ src="video.mp4" на своё видео -->
+  <div class="video-bg">
+    <video src="video.mp4" autoplay muted loop playsinline></video>
+  </div>
+
+  <div class="page-overlay"></div>
+
+  <!-- Шапка -->
+  <header class="header">
+    <div class="container header-inner">
+      <div class="logo-block">
+        <div class="logo"><span>Красно-Белое</span> Новомосковск</div>
+        <div class="logo-sub">Московская 28 • Официальный магазин сети</div>
+      </div>
+
+      <nav class="nav">
+        <a href="#about">О магазине</a>
+        <a href="#map">Адрес</a>
+        <a href="#jobs">Работа</a>
+        <a href="#training">Обучение</a>
+        <a class="nav-cta" href="https://krasnoeibeloe.ru/catalog/" target="_blank">Каталог сети</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Герой -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="reveal">
+          <div class="badge">
+            <div class="badge-dot"></div>
+            Магазин «Красно-Белое» • Новомосковск
+          </div>
+
+          <h1 class="hero-title">
+            Тот самый <span>Красно-Белое</span> на Московской 28
+          </h1>
+
+          <p class="hero-sub">
+            Фирменный магазин сети «Красно-Белое» в г. Новомосковск, Тульская область.
+            Официальный ассортимент, акции федеральной сети и команда, которая умеет работать с гостями.
+          </p>
+
+          <div class="hero-highlights">
+            <div class="pill">Официальный магазин сети</div>
+            <div class="pill">Надёжный работодатель</div>
+            <div class="pill">Удобное расположение</div>
+          </div>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://krasnoeibeloe.ru/catalog/" target="_blank">
+              Посмотреть каталог сети
+            </a>
+            <a class="btn btn-ghost" href="#jobs">
+              Хочу работать в этом магазине
+            </a>
+          </div>
+
+          <div class="hero-note">
+            Адрес магазина: г. Новомосковск, Тульская область, ул. Московская 28
+          </div>
+        </div>
+
+        <div class="hero-card reveal">
+          <div class="hero-card-title">
+            <span class="status-dot"></span>
+            Магазин работает в штатном режиме
+          </div>
+
+          <div class="hero-card-main">
+            Крутой магазин, сильный штат и высокий стандарт сервиса.
+          </div>
+
+          <div class="hero-card-tag">
+            Магазин «Красно-Белое» • Новомосковск
+          </div>
+
+          <div class="hero-rows">
+            <div>
+              <div class="hero-row-label">Формат</div>
+              <div class="hero-row-value">Фирменный магазин крупнейшей федеральной сети «Красно-Белое»</div>
+            </div>
+            <div>
+              <div class="hero-row-label">Ассортимент</div>
+              <div class="hero-row-value">Широкий выбор напитков, продуктов и сопутствующих товаров</div>
+            </div>
+            <div>
+              <div class="hero-row-label">Команда</div>
+              <div class="hero-row-value">Опытный, сработанный штат и понятные стандарты работы</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- О магазине -->
+    <section id="about" class="section">
+      <div class="container">
+        <div class="card card-grid-2 reveal">
+          <div>
+            <h2 class="section-title">Почему этот магазин — один из лучших</h2>
+            <p class="section-sub">
+              Магазин «Красно-Белое» по адресу <b>г. Новомосковск, ул. Московская 28</b> —
+              это узнаваемый формат федеральной сети и удобная точка для жителей района.
+              Сюда приходят за привычным сервисом и понятными ценами.
+            </p>
+
+            <ul class="list">
+              <li>
+                <div class="list-bullet"></div>
+                <div>Ассортимент сети «Красно-Белое» — привычные позиции, акции и предложения, которые знают покупатели.</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>Федеральный бренд с сильной узнаваемостью и стабильными стандартами обслуживания.</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>Быстрое обслуживание, выстроенные процессы и команда, которая знает своё дело.</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>Удобное расположение на Московской 28 — легко объяснить гостям, как до нас добраться.</div>
+              </li>
+            </ul>
+
+            <div class="tag-row">
+              <div class="tag">Федеральная сеть</div>
+              <div class="tag">Проверенный работодатель</div>
+              <div class="tag">Комфортный магазин</div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="section-title" style="font-size:18px;margin-bottom:10px;">Что предлагает наш магазин</h3>
+            <ul class="list">
+              <li>
+                <div class="list-bullet"></div>
+                <div>Широкий выбор напитков и сопутствующих товаров на каждый день.</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>Регулярные акции и специальные предложения федеральной сети.</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>Понятная ценовая политика и удобный формат магазина у дома.</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>Чёткие стандарты выкладки, чистоты и сервиса.</div>
+              </li>
+            </ul>
+
+            <a class="btn btn-primary" href="https://krasnoeibeloe.ru/catalog/" target="_blank" style="margin-top:18px;">
+              Перейти в каталог сети
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Адрес и карта -->
+    <section id="map" class="section">
+      <div class="container">
+        <div class="card reveal">
+          <h2 class="section-title">Адрес и расположение</h2>
+          <p class="section-sub">
+            Мы находимся по адресу: <b>г. Новомосковск, Тульская область, ул. Московская 28</b>.
+            Ниже — карта, по которой можно удобно построить маршрут.
+          </p>
+
+          <div class="map-wrapper">
+            <iframe
+              src="https://yandex.ru/map-widget/v1/?um=constructor%3A8d38a67dfa39e9db1e8c817b858079410edbd4d1fab0ec98c024aaa0dae68cf5&amp;source=constructor"
+              loading="lazy"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Работа -->
+    <section id="jobs" class="section">
+      <div class="container">
+        <div class="card card-grid-2 reveal">
+          <div>
+            <h2 class="section-title">Работа в магазине на Московской 28</h2>
+            <p class="section-sub">
+              Магазин «Красно-Белое» в Новомосковске — это сильный штат,
+              выстроенные процессы и понятные правила игры. Если ты хочешь
+              стабильную работу с понятной нагрузкой и ростом — это то место.
+            </p>
+
+            <ul class="list">
+              <li>
+                <div class="list-bullet"></div>
+                <div>Прозрачные обязанности и чёткие стандарты сети.</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>Сработанная команда и адекватное отношение к сотрудникам.</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>Федеральная компания — это стабильные выплаты и понятные правила.</div>
+              </li>
+            </ul>
+
+            <a class="btn btn-primary" href="https://t.me/thedark_1331" target="_blank" style="margin-top:18px;">
+              Трудоустроиться в магазин
+            </a>
+            <div class="hero-note" style="margin-top:6px;">
+              Напиши с пометкой: «Ищу работу в Красно-Белое на Московской 28».
+            </div>
+          </div>
+
+          <div>
+            <h3 class="section-title" style="font-size:18px;margin-bottom:10px;">Кому подойдёт работа</h3>
+            <ul class="list">
+              <li>
+                <div class="list-bullet"></div>
+                <div>Тем, кто хочет стабильный доход и фиксированный график.</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>Тем, кто умеет спокойно общаться с гостями и работать в команде.</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>Тем, кто хочет расти внутри федеральной сети и со временем занимать более сильные позиции.</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Обучение -->
+    <section id="training" class="section">
+      <div class="container">
+        <div class="card card-grid-2 reveal">
+          <div>
+            <h2 class="section-title">Обучение: зачем оно нужно</h2>
+            <p class="section-sub">
+              Обучение — это не формальность. Это способ быстро войти в процесс,
+              понимать стандарты сети и чувствовать себя уверенно на смене.
+            </p>
+
+            <ul class="list">
+              <li>
+                <div class="list-bullet"></div>
+                <div>Ты понимаешь, как устроен магазин изнутри и что важно для сети «Красно-Белое».</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>Быстрее выходишь на нормальный темп и доход, без хаоса и лишнего стресса.</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>Развиваешь дисциплину, ответственность и навыки работы с гостями.</div>
+              </li>
+            </ul>
+
+            <a class="btn btn-primary" href="https://krasivyeibodrye.taplink.ws/" target="_blank" style="margin-top:18px;">
+              Пройти обучение
+            </a>
+          </div>
+
+          <div>
+            <h3 class="section-title" style="font-size:18px;margin-bottom:10px;">Что даёт обучение</h3>
+            <ul class="list">
+              <li>
+                <div class="list-bullet"></div>
+                <div>Ты понимаешь стандарты сети и работаешь без «случайных» ошибок.</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>Чувствуешь себя увереннее с гостями и внутри команды.</div>
+              </li>
+              <li>
+                <div class="list-bullet"></div>
+                <div>У тебя больше шансов на рост и более сильные позиции в будущем.</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Маленький блок "Отзывы" для дорогого ощущения -->
+    <section class="section">
+      <div class="container">
+        <div class="card reveal">
+          <h2 class="section-title">Что говорят о формате «Красно-Белое»</h2>
+          <p class="section-sub">
+            Формат сети давно знаком покупателям: понятный ассортимент, акции и узнаваемый стиль.
+            Ниже — типичные отзывы о магазинах этого формата.
+          </p>
+
+          <div class="reviews-grid">
+            <div class="review-card">
+              <div class="review-name">Александр</div>
+              <div class="review-meta">гость магазина</div>
+              <div>Всегда знаю, что найду привычные позиции и акционные товары. Формат понятный, магазин рядом с домом — удобно.</div>
+            </div>
+            <div class="review-card">
+              <div class="review-name">Мария</div>
+              <div class="review-meta">гость магазина</div>
+              <div>Нравится, когда персонал работает по стандарту: быстро, без лишней суеты и с нормальным отношением к людям.</div>
+            </div>
+            <div class="review-card">
+              <div class="review-name">Игорь</div>
+              <div class="review-meta">сотрудник сети</div>
+              <div>В федеральной сети ценю стабильность и понятные правила. Когда процессы выстроены, работать проще и спокойнее.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    Магазин <span>«Красно-Белое»</span>, г. Новомосковск, ул. Московская 28 • Официальный формат сети<br>
+    © 2025
+  </footer>
+
+  <!-- Анимация появления блоков при скролле -->
+  <script>
+    (function () {
+      const elements = document.querySelectorAll(".reveal");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("reveal-visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.18 }
+      );
+
+      elements.forEach((el) => observer.observe(el));
+    })();
+  </script>
+</body>
+</html>
